@@ -373,9 +373,9 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     design_total_marks = num_designs * config["MARKS_PER_DESIGN"]
     overall_marks = mcq_total_marks + design_total_marks
 
-    faculty_name = config.get("FACULTY_NAME", "Course Faculty")
-    department = config.get("DEPARTMENT", "Department of Electrical & Electronics Engineering")
-    college_name = config.get("COLLEGE_NAME", "Engineering College")
+    faculty_name = config.get("FACULTY_NAME", "Dr. Ajith K K")
+    department = config.get("DEPARTMENT", "Department of Electronics and Communication Engineering")
+    college_name = config.get("COLLEGE_NAME", "Government College of Engineering Kannur")
 
     # --- TOP HEADER BANNER ---
     header_html = widgets.HTML(f"""
@@ -400,12 +400,12 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     <div style="margin-top:28px; padding:14px 18px; background:#f1f5f9; border-top:3px solid #1e3c72; border-radius:6px; text-align:center; font-family:'Segoe UI', Arial, sans-serif; color:#334155; font-size:13px;">
         <div><b>{config['COURSE_TITLE']}</b> — Interactive Auto-Graded CIE Assessment</div>
         <div style="margin-top:4px; color:#0f172a;">
-            👨‍🏫 <b>Faculty:</b> {faculty_name} &nbsp;|&nbsp; 🏢 <b>{department}</b> &nbsp;|&nbsp; 🏛️ <b>{college_name}</b>
+            <b>Faculty:</b> {faculty_name} &nbsp;|&nbsp; <b>{department}</b> &nbsp;|&nbsp; <b>{college_name}</b>
         </div>
     </div>
     """)
 
-    roll_box = widgets.Text(description="Roll No:", placeholder="e.g., KTU24EE045", style={'description_width': '70px'})
+    roll_box = widgets.Text(description="Roll No:", placeholder="e.g., 5", style={'description_width': '70px'})
     name_box = widgets.Text(description="Full Name:", placeholder="e.g., Rahul Nair", style={'description_width': '75px'})
     start_btn = widgets.Button(description="Start Assignment", button_style='primary', icon='play', layout=widgets.Layout(width='200px'))
 
