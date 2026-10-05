@@ -49,7 +49,6 @@ def render_circuit_svg(circuit_type, p):
         return f"""
         <svg class="ckt-svg" width="600" height="230" viewBox="0 0 600 230">
             {defs_and_style}
-            <!-- Primary AC Source -->
             <circle cx="55" cy="115" r="20" class="comp"/>
             <path d="M 44 115 Q 49.5 103 55 115 T 66 115" class="comp"/>
             <text x="18" y="82" class="math">v<tspan dy="3" class="sub-it">in</tspan><tspan dy="-3" class="rom">(t)</tspan></text>
@@ -58,34 +57,27 @@ def render_circuit_svg(circuit_type, p):
             <line x1="55" y1="135" x2="55" y2="175" class="wire"/>
             <line x1="55" y1="175" x2="125" y2="175" class="wire"/>
 
-            <!-- Transformer Primary Winding (4 turns) -->
             <path d="M 125,55 L 125,75 A 9,7.5 0 0,1 125,95 A 9,7.5 0 0,1 125,115 A 9,7.5 0 0,1 125,135 A 9,7.5 0 0,1 125,155 L 125,175" class="comp"/>
-            <!-- Magnetic Core Bars -->
             <line x1="142" y1="68" x2="142" y2="162" class="core"/>
             <line x1="148" y1="68" x2="148" y2="162" class="core"/>
-            <!-- Transformer Secondary Winding -->
             <path d="M 165,55 L 165,75 A 9,7.5 0 0,0 165,95 A 9,7.5 0 0,0 165,115 A 9,7.5 0 0,0 165,135 A 9,7.5 0 0,0 165,155 L 165,175" class="comp"/>
             <circle cx="116" cy="68" r="2.2" class="node"/>
             <circle cx="174" cy="68" r="2.2" class="node"/>
 
-            <!-- Secondary Voltage Label -->
             <text x="178" y="80" class="rom">+</text>
             <text x="175" y="112" class="math">v<tspan dy="3" class="sub-it">s</tspan><tspan dy="-3" class="rom">(t)</tspan></text>
             <text x="175" y="130" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">m</tspan></tspan><tspan dy="-3"> = {p['Vm']} V</tspan></text>
             <text x="179" y="162" class="rom">−</text>
 
-            <!-- Top Rail & Diode D1 -->
             <line x1="165" y1="55" x2="285" y2="55" class="wire"/>
             <polygon points="285,43 285,67 311,55" class="diode-body"/>
             <line x1="311" y1="41" x2="311" y2="69" class="comp"/>
             <text x="290" y="34" class="math">D<tspan dy="3" class="sub">1</tspan></text>
             <line x1="311" y1="55" x2="510" y2="55" class="wire"/>
 
-            <!-- Forward Current Arrow -->
             <line x1="340" y1="43" x2="380" y2="43" class="curr-arrow"/>
             <text x="348" y="35" class="curr-lbl">i<tspan dy="3" class="sub-it">d</tspan><tspan dy="-3" class="rom">(t)</tspan></text>
 
-            <!-- Load Resistor RL -->
             <circle cx="430" cy="55" r="3" class="node"/>
             <line x1="430" y1="55" x2="430" y2="85" class="wire"/>
             <polyline points="430,85 439,90 421,100 439,110 421,120 439,130 421,140 430,145" class="comp"/>
@@ -95,7 +87,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="415" y1="70" x2="415" y2="100" class="curr-arrow"/>
             <text x="392" y="90" class="curr-lbl">i<tspan dy="3" class="sub-it">L</tspan></text>
 
-            <!-- Output Terminals + vo(t) - -->
             <line x1="165" y1="175" x2="510" y2="175" class="wire"/>
             <circle cx="510" cy="55" r="3.5" class="term"/>
             <circle cx="510" cy="175" r="3.5" class="term"/>
@@ -103,7 +94,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="500" y="118" class="math">v<tspan dy="3" class="sub-it">o</tspan><tspan dy="-3" class="rom">(t)</tspan></text>
             <text x="506" y="162" class="rom">−</text>
 
-            <!-- Reference Ground -->
             <circle cx="290" cy="175" r="3" class="node"/>
             <line x1="290" y1="175" x2="290" y2="193" class="wire"/>
             <line x1="276" y1="193" x2="304" y2="193" class="comp"/>
@@ -115,7 +105,6 @@ def render_circuit_svg(circuit_type, p):
         return f"""
         <svg class="ckt-svg" width="620" height="260" viewBox="0 0 620 260">
             {defs_and_style}
-            <!-- Primary AC Source -->
             <circle cx="48" cy="130" r="20" class="comp"/>
             <path d="M 37 130 Q 42.5 118 48 130 T 59 130" class="comp"/>
             <text x="12" y="96" class="math">v<tspan dy="3" class="sub-it">in</tspan><tspan dy="-3" class="rom">(t)</tspan></text>
@@ -124,14 +113,11 @@ def render_circuit_svg(circuit_type, p):
             <line x1="48" y1="150" x2="48" y2="215" class="wire"/>
             <line x1="48" y1="215" x2="110" y2="215" class="wire"/>
 
-            <!-- Primary Winding -->
             <path d="M 110,45 L 110,80 A 9,8.5 0 0,1 110,105 A 9,8.5 0 0,1 110,130 A 9,8.5 0 0,1 110,155 A 9,8.5 0 0,1 110,180 L 110,215" class="comp"/>
             <line x1="126" y1="55" x2="126" y2="205" class="core"/>
             <line x1="132" y1="55" x2="132" y2="205" class="core"/>
-            <!-- Secondary Winding (Upper & Lower Halves) -->
             <path d="M 148,45 L 148,60 A 9,7 0 0,0 148,77.5 A 9,7 0 0,0 148,95 A 9,7 0 0,0 148,112.5 A 9,7 0 0,0 148,130 A 9,7 0 0,0 148,147.5 A 9,7 0 0,0 148,165 A 9,7 0 0,0 148,182.5 A 9,7 0 0,0 148,200 L 148,215" class="comp"/>
 
-            <!-- Upper & Lower Vm Labels -->
             <text x="158" y="62" class="rom">+</text>
             <text x="158" y="88" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">m</tspan></tspan><tspan dy="-3"> = {p['Vm']} V</tspan></text>
             <text x="158" y="118" class="rom">−</text>
@@ -139,7 +125,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="158" y="178" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">m</tspan></tspan><tspan dy="-3"> = {p['Vm']} V</tspan></text>
             <text x="158" y="206" class="rom">−</text>
 
-            <!-- Center-Tap Ground & Return -->
             <circle cx="148" cy="130" r="3.2" class="node"/>
             <line x1="148" y1="130" x2="290" y2="130" class="wire"/>
             <circle cx="255" cy="130" r="3" class="node"/>
@@ -149,7 +134,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="251" y1="158" x2="259" y2="158" class="comp"/>
             <text x="235" y="122" class="rom">CT</text>
 
-            <!-- Diode D1 (Top Branch) -->
             <line x1="148" y1="45" x2="310" y2="45" class="wire"/>
             <polygon points="310,33 310,57 336,45" class="diode-body"/>
             <line x1="336" y1="31" x2="336" y2="59" class="comp"/>
@@ -158,7 +142,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="365" y1="34" x2="405" y2="34" class="curr-arrow"/>
             <text x="375" y="26" class="curr-lbl">i<tspan dy="3" class="sub">1</tspan></text>
 
-            <!-- Diode D2 (Bottom Branch) -->
             <line x1="148" y1="215" x2="310" y2="215" class="wire"/>
             <polygon points="310,203 310,227 336,215" class="diode-body"/>
             <line x1="336" y1="201" x2="336" y2="229" class="comp"/>
@@ -167,7 +150,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="365" y1="204" x2="405" y2="204" class="curr-arrow"/>
             <text x="375" y="196" class="curr-lbl">i<tspan dy="3" class="sub">2</tspan></text>
 
-            <!-- Cathode Tie & Load Resistor RL -->
             <line x1="495" y1="45" x2="495" y2="215" class="wire"/>
             <circle cx="495" cy="130" r="3.2" class="node"/>
             <line x1="495" y1="130" x2="435" y2="130" class="wire"/>
@@ -184,7 +166,6 @@ def render_circuit_svg(circuit_type, p):
         return f"""
         <svg class="ckt-svg" width="620" height="260" viewBox="0 0 620 260">
             {defs_and_style}
-            <!-- Primary AC Source & Transformer -->
             <circle cx="45" cy="125" r="19" class="comp"/>
             <path d="M 35 125 Q 40 114 45 125 T 55 125" class="comp"/>
             <line x1="45" y1="106" x2="45" y2="55" class="wire"/>
@@ -198,7 +179,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="142" y="118" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">m</tspan></tspan><tspan dy="-3"> = {p['Vm']} V</tspan></text>
             <text x="142" y="138" class="rom">(50 Hz)</text>
 
-            <!-- Transformer Connections to Diamond Top (300,55) and Bottom (300,195) -->
             <line x1="132" y1="55" x2="300" y2="55" class="wire"/>
             <line x1="132" y1="195" x2="300" y2="195" class="wire"/>
             <circle cx="300" cy="55" r="3.2" class="node"/>
@@ -206,41 +186,35 @@ def render_circuit_svg(circuit_type, p):
             <circle cx="230" cy="125" r="3.2" class="node"/>
             <circle cx="370" cy="125" r="3.2" class="node"/>
 
-            <!-- 4 Diamond Bridge Arms -->
             <line x1="230" y1="125" x2="300" y2="55" class="wire"/>
             <line x1="300" y1="55" x2="370" y2="125" class="wire"/>
             <line x1="230" y1="125" x2="300" y2="195" class="wire"/>
             <line x1="300" y1="195" x2="370" y2="125" class="wire"/>
 
-            <!-- D4: Left(230,125) to Top(300,55), angle -45 deg -->
             <g transform="translate(265,90) rotate(-45)">
                 <polygon points="-11,-9 -11,9 11,0" class="diode-body"/>
                 <line x1="11" y1="-10" x2="11" y2="10" class="comp"/>
             </g>
             <text x="235" y="75" class="math">D<tspan dy="3" class="sub">4</tspan></text>
 
-            <!-- D1: Top(300,55) to Right(370,125), angle +45 deg -->
             <g transform="translate(335,90) rotate(45)">
                 <polygon points="-11,-9 -11,9 11,0" class="diode-body"/>
                 <line x1="11" y1="-10" x2="11" y2="10" class="comp"/>
             </g>
             <text x="348" y="75" class="math">D<tspan dy="3" class="sub">1</tspan></text>
 
-            <!-- D3: Left(230,125) to Bottom(300,195), angle +45 deg -->
             <g transform="translate(265,160) rotate(45)">
                 <polygon points="-11,-9 -11,9 11,0" class="diode-body"/>
                 <line x1="11" y1="-10" x2="11" y2="10" class="comp"/>
             </g>
             <text x="235" y="182" class="math">D<tspan dy="3" class="sub">3</tspan></text>
 
-            <!-- D2: Bottom(300,195) to Right(370,125), angle -45 deg -->
             <g transform="translate(335,160) rotate(-45)">
                 <polygon points="-11,-9 -11,9 11,0" class="diode-body"/>
                 <line x1="11" y1="-10" x2="11" y2="10" class="comp"/>
             </g>
             <text x="348" y="182" class="math">D<tspan dy="3" class="sub">2</tspan></text>
 
-            <!-- DC Output Rails to RL -->
             <line x1="370" y1="125" x2="485" y2="125" class="wire"/>
             <line x1="485" y1="125" x2="485" y2="145" class="wire"/>
             <polyline points="485,145 494,150 476,160 494,170 476,180 494,190 476,200 485,205" class="comp"/>
@@ -248,7 +222,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="230" y1="125" x2="230" y2="230" class="wire"/>
             <line x1="230" y1="230" x2="485" y2="230" class="wire"/>
 
-            <!-- Ground & Load Labels -->
             <circle cx="230" cy="230" r="3" class="node"/>
             <line x1="230" y1="230" x2="230" y2="242" class="wire"/>
             <line x1="218" y1="242" x2="242" y2="242" class="comp"/>
@@ -265,7 +238,6 @@ def render_circuit_svg(circuit_type, p):
         return f"""
         <svg class="ckt-svg" width="640" height="240" viewBox="0 0 640 240">
             {defs_and_style}
-            <!-- AC Source feeding Bridge -->
             <circle cx="55" cy="120" r="22" class="comp"/>
             <path d="M 43 120 Q 49 107 55 120 T 67 120" class="comp"/>
             <text x="15" y="75" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">m</tspan></tspan><tspan dy="-3"> = {p['Vm']} V</tspan></text>
@@ -275,7 +247,6 @@ def render_circuit_svg(circuit_type, p):
             <line x1="55" y1="142" x2="55" y2="185" class="wire"/>
             <line x1="55" y1="185" x2="185" y2="185" class="wire"/>
 
-            <!-- Full-Wave Bridge Diamond -->
             <circle cx="185" cy="55" r="3" class="node"/>
             <circle cx="185" cy="185" r="3" class="node"/>
             <circle cx="120" cy="120" r="3" class="node"/>
@@ -301,14 +272,12 @@ def render_circuit_svg(circuit_type, p):
                 <line x1="9" y1="-8.5" x2="9" y2="8.5" class="comp"/>
             </g>
 
-            <!-- DC Rails to Shunt Capacitor C and Load RL -->
             <line x1="250" y1="120" x2="280" y2="120" class="wire"/>
             <line x1="280" y1="120" x2="280" y2="55" class="wire"/>
             <line x1="280" y1="55" x2="545" y2="55" class="wire"/>
             <line x1="120" y1="120" x2="120" y2="205" class="wire"/>
             <line x1="120" y1="205" x2="545" y2="205" class="wire"/>
 
-            <!-- Shunt Capacitor Filter C -->
             <circle cx="365" cy="55" r="3" class="node"/>
             <circle cx="365" cy="205" r="3" class="node"/>
             <line x1="365" y1="55" x2="365" y2="118" class="wire"/>
@@ -319,7 +288,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="388" y="118" class="math">C</text>
             <text x="388" y="136" class="val">{c_str}</text>
 
-            <!-- Load Resistor RL -->
             <circle cx="495" cy="55" r="3" class="node"/>
             <circle cx="495" cy="205" r="3" class="node"/>
             <line x1="495" y1="55" x2="495" y2="95" class="wire"/>
@@ -328,7 +296,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="510" y="122" class="math">R<tspan dy="3" class="sub-it">L</tspan></text>
             <text x="510" y="142" class="val">{p['RL']} Ω</text>
 
-            <!-- Output Terminals -->
             <circle cx="545" cy="55" r="3.5" class="term"/>
             <circle cx="545" cy="205" r="3.5" class="term"/>
             <text x="560" y="62" class="rom">+</text>
@@ -340,7 +307,6 @@ def render_circuit_svg(circuit_type, p):
         return f"""
         <svg class="ckt-svg" width="600" height="230" viewBox="0 0 600 230">
             {defs_and_style}
-            <!-- Unregulated DC Input Battery Vin -->
             <line x1="65" y1="50" x2="65" y2="98" class="wire"/>
             <line x1="48" y1="98" x2="82" y2="98" class="comp"/>
             <line x1="55" y1="106" x2="75" y2="106" stroke="#111" stroke-width="3.2"/>
@@ -352,23 +318,18 @@ def render_circuit_svg(circuit_type, p):
             <text x="88" y="108" class="math">V<tspan dy="3" class="sub-it">in</tspan></text>
             <text x="88" y="126" class="val">{p['Vin']} V</text>
 
-            <!-- Top Wire & Series Resistor RS -->
             <line x1="65" y1="50" x2="155" y2="50" class="wire"/>
             <polyline points="155,50 160,41 170,59 180,41 190,59 200,41 210,59 215,50" class="comp"/>
             <text x="155" y="30" class="math">R<tspan dy="3" class="sub-it">S</tspan><tspan dy="-3" class="val"> = ? Ω</tspan></text>
             <line x1="215" y1="50" x2="515" y2="50" class="wire"/>
 
-            <!-- Series Current Arrow IS -->
             <line x1="230" y1="38" x2="268" y2="38" class="curr-arrow"/>
             <text x="240" y="30" class="curr-lbl">I<tspan dy="3" class="sub-it">S</tspan></text>
 
-            <!-- Zener Shunt Branch (Cathode Up for Reverse Breakdown) -->
             <circle cx="305" cy="50" r="3.2" class="node"/>
             <circle cx="305" cy="180" r="3.2" class="node"/>
             <line x1="305" y1="50" x2="305" y2="102" class="wire"/>
-            <!-- Zener Cathode Bar with Bent Wings -->
             <polyline points="290,96 294,102 316,102 320,108" class="comp"/>
-            <!-- Upward-pointing Diode Triangle -->
             <polygon points="293,128 317,128 305,102" class="diode-body"/>
             <line x1="305" y1="128" x2="305" y2="180" class="wire"/>
             <line x1="288" y1="65" x2="288" y2="95" class="curr-arrow"/>
@@ -376,7 +337,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="325" y="108" class="val"><tspan class="math-bold">V<tspan dy="3" class="sub-it">Z</tspan></tspan><tspan dy="-3"> = {p['VZ']} V</tspan></text>
             <text x="325" y="128" class="val"><tspan class="math-bold">I<tspan dy="3" class="sub-it">Z</tspan></tspan><tspan dy="-3"> = {p['IZ']} mA</tspan></text>
 
-            <!-- Load Resistor Branch RL -->
             <circle cx="445" cy="50" r="3.2" class="node"/>
             <circle cx="445" cy="180" r="3.2" class="node"/>
             <line x1="445" y1="50" x2="445" y2="85" class="wire"/>
@@ -387,7 +347,6 @@ def render_circuit_svg(circuit_type, p):
             <text x="462" y="112" class="math">R<tspan dy="3" class="sub-it">L</tspan></text>
             <text x="462" y="130" class="val">{p['RL']} Ω</text>
 
-            <!-- Output Terminals + VL - & Ground -->
             <line x1="65" y1="180" x2="515" y2="180" class="wire"/>
             <circle cx="515" cy="50" r="3.5" class="term"/>
             <circle cx="515" cy="180" r="3.5" class="term"/>
@@ -403,7 +362,7 @@ def render_circuit_svg(circuit_type, p):
     return ""
 
 # ==============================================================================
-# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (JUPYTERLITE VOILA COMPATIBLE)
+# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (WITH HEADER & FOOTER)
 # ==============================================================================
 def launch_assessment(config, mcq_bank, design_builder_fn):
     num_mcqs = min(config["NUM_MCQS"], len(mcq_bank))
@@ -414,14 +373,35 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     design_total_marks = num_designs * config["MARKS_PER_DESIGN"]
     overall_marks = mcq_total_marks + design_total_marks
 
+    faculty_name = config.get("FACULTY_NAME", "Course Faculty")
+    department = config.get("DEPARTMENT", "Department of Electrical & Electronics Engineering")
+    college_name = config.get("COLLEGE_NAME", "Engineering College")
+
+    # --- TOP HEADER BANNER ---
     header_html = widgets.HTML(f"""
-    <div style="background:linear-gradient(90deg, #1e3c72, #2a5298); color:white; padding:18px; border-radius:8px; margin-bottom:12px;">
-        <h2 style="margin:0;">⚡ {config['COURSE_TITLE']}</h2>
-        <p style="margin:6px 0 0 0;">
+    <div style="background:linear-gradient(90deg, #1e3c72, #2a5298); color:white; padding:20px; border-radius:8px; margin-bottom:14px; font-family:'Segoe UI', Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
+        <div style="font-size:13px; text-transform:uppercase; letter-spacing:1px; color:#bbdefb; font-weight:600; margin-bottom:4px;">
+            🏛️ {college_name} &nbsp;|&nbsp; {department}
+        </div>
+        <h2 style="margin:0 0 6px 0; font-size:22px;">⚡ {config['COURSE_TITLE']}</h2>
+        <div style="font-size:14px; color:#e3f2fd; margin-bottom:10px;">
+            👨‍🏫 <b>Course Faculty:</b> {faculty_name}
+        </div>
+        <div style="background:rgba(255,255,255,0.14); padding:8px 12px; border-radius:5px; font-size:13.5px; display:inline-block;">
             <b>Stage 1:</b> {num_mcqs} MCQs ({mcq_total_marks} Marks) &nbsp;|&nbsp;
             <b>Stage 2:</b> {num_designs} Circuit Design Problems ({design_total_marks} Marks) &nbsp;|&nbsp;
             <b>Total: {overall_marks} Marks</b>
-        </p>
+        </div>
+    </div>
+    """)
+
+    # --- BOTTOM FOOTER BAR ---
+    footer_html = widgets.HTML(f"""
+    <div style="margin-top:28px; padding:14px 18px; background:#f1f5f9; border-top:3px solid #1e3c72; border-radius:6px; text-align:center; font-family:'Segoe UI', Arial, sans-serif; color:#334155; font-size:13px;">
+        <div><b>{config['COURSE_TITLE']}</b> — Interactive Auto-Graded CIE Assessment</div>
+        <div style="margin-top:4px; color:#0f172a;">
+            👨‍🏫 <b>Faculty:</b> {faculty_name} &nbsp;|&nbsp; 🏢 <b>{department}</b> &nbsp;|&nbsp; 🏛️ <b>{college_name}</b>
+        </div>
     </div>
     """)
 
@@ -598,17 +578,20 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
                 b.disabled = True
                 ver_code = make_verification_code(roll_box.value, name_box.value, config)
                 stage2_feedback.value = f"""
-                <div style="background:linear-gradient(135deg, #e8f5e9, #c8e6c9); border:3px solid #2e7d32; padding:22px; border-radius:10px; margin-top:18px; text-align:center;">
-                    <h2 style="color:#1b5e20; margin:0 0 10px 0;">🎉 Congratulations, {name_box.value.strip()}!</h2>
-                    <p style="font-size:16px; margin:0 0 15px 0;">
+                <div style="background:linear-gradient(135deg, #e8f5e9, #c8e6c9); border:3px solid #2e7d32; padding:22px; border-radius:10px; margin-top:18px; text-align:center; font-family:'Segoe UI', Arial, sans-serif;">
+                    <div style="font-size:12.5px; color:#2e7d32; font-weight:bold; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">
+                        {college_name} • {department}
+                    </div>
+                    <h2 style="color:#1b5e20; margin:0 0 8px 0;">🎉 Congratulations, {name_box.value.strip()}!</h2>
+                    <p style="font-size:15.5px; margin:0 0 14px 0;">
                         You have mastered all {num_mcqs} MCQs ({mcq_total_marks} Marks) and solved all {num_designs} Circuit Design Problems ({design_total_marks} Marks)
                         for a total score of <b>{overall_marks} / {overall_marks} Marks</b>!
                     </p>
                     <div style="background:#ffffff; border:2px dashed #1b5e20; display:inline-block; padding:14px 28px; border-radius:8px; margin-bottom:12px;">
-                        <span style="font-size:13px; color:#555; display:block;">FACULTY / TA VERIFICATION CODE</span>
+                        <span style="font-size:12px; color:#555; display:block;">VERIFICATION CODE ({faculty_name})</span>
                         <span style="font-size:24px; font-family:monospace; font-weight:bold; color:#0d47a1; letter-spacing:2px;">{ver_code}</span>
                     </div>
-                    <p style="font-size:14px; color:#333; margin:0;">📋 Share this code with your Faculty/TA for verification.</p>
+                    <p style="font-size:14px; color:#333; margin:0;">📋 Share this code with <b>{faculty_name}</b> / TA for CIE verification.</p>
                 </div>
                 """
         except Exception:
@@ -621,6 +604,7 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
         stage1_box,
         stage1_feedback,
         stage2_box,
-        stage2_feedback
+        stage2_feedback,
+        footer_html
     ])
     display(main_container)
