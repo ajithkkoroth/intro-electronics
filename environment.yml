@@ -1,8 +1,10 @@
-name: voici
+name: xeus-python-kernel
 channels:
-  - https://prefix.dev/emscripten-forge-dev
-  - https://prefix.dev/conda-forge
+  - https://repo.prefix.dev/emscripten-forge-dev
+  - https://repo.prefix.dev/conda-forge
 dependencies:
   - xeus-python
-  - pandas
-  - bqplot
+  - ipywidgets
+  - matplotlib
+  - pip:
+    - schemdraw
