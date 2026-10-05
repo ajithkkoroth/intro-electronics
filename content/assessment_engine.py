@@ -381,11 +381,11 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     header_html = widgets.HTML(f"""
     <div style="background:linear-gradient(90deg, #1e3c72, #2a5298); color:white; padding:20px; border-radius:8px; margin-bottom:14px; font-family:'Segoe UI', Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
         <div style="font-size:13px; text-transform:uppercase; letter-spacing:1px; color:#bbdefb; font-weight:600; margin-bottom:4px;">
-            🏛️ {college_name} &nbsp;|&nbsp; {department}
+            {college_name} &nbsp;|&nbsp; {department}
         </div>
-        <h2 style="margin:0 0 6px 0; font-size:22px;">⚡ {config['COURSE_TITLE']}</h2>
+        <h2 style="margin:0 0 6px 0; font-size:22px;"> {config['COURSE_TITLE']}</h2>
         <div style="font-size:14px; color:#e3f2fd; margin-bottom:10px;">
-            👨‍🏫 <b>Course Faculty:</b> {faculty_name}
+            <b>Course Faculty:</b> {faculty_name}
         </div>
         <div style="background:rgba(255,255,255,0.14); padding:8px 12px; border-radius:5px; font-size:13.5px; display:inline-block;">
             <b>Stage 1:</b> {num_mcqs} MCQs ({mcq_total_marks} Marks) &nbsp;|&nbsp;
@@ -406,7 +406,7 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     """)
 
     roll_box = widgets.Text(description="Roll No:", placeholder="e.g., 5", style={'description_width': '70px'})
-    name_box = widgets.Text(description="Full Name:", placeholder="e.g., Rahul Nair", style={'description_width': '75px'})
+    name_box = widgets.Text(description="Full Name:", placeholder="e.g., Rahul K C", style={'description_width': '75px'})
     start_btn = widgets.Button(description="Start Assignment", button_style='primary', icon='play', layout=widgets.Layout(width='200px'))
 
     stage1_box = widgets.VBox([])
