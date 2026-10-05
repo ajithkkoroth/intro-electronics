@@ -27,7 +27,7 @@ def render_circuit_svg(circuit_type, p):
         </marker>
     </defs>
     <style>
-        .ckt-svg { background:#ffffff; border:1px solid #d0d7de; border-radius:8px; margin:10px 0; max-width:100%; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+        .ckt-svg { background:#ffffff; border:1px solid #d0d7de; border-radius:8px; margin:10px 0; width:100%; max-width:640px; height:auto; display:block; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
         .wire { stroke:#111111; stroke-width:1.8; fill:none; stroke-linecap:round; stroke-linejoin:round; }
         .comp { stroke:#111111; stroke-width:2.0; fill:none; stroke-linecap:round; stroke-linejoin:round; }
         .core { stroke:#111111; stroke-width:1.6; }
@@ -47,7 +47,7 @@ def render_circuit_svg(circuit_type, p):
 
     if circuit_type == "hwr":
         return f"""
-        <svg class="ckt-svg" width="600" height="230" viewBox="0 0 600 230">
+        <svg class="ckt-svg" viewBox="0 0 600 230">
             {defs_and_style}
             <circle cx="55" cy="115" r="20" class="comp"/>
             <path d="M 44 115 Q 49.5 103 55 115 T 66 115" class="comp"/>
@@ -103,7 +103,7 @@ def render_circuit_svg(circuit_type, p):
 
     elif circuit_type == "ctfwr":
         return f"""
-        <svg class="ckt-svg" width="620" height="260" viewBox="0 0 620 260">
+        <svg class="ckt-svg" viewBox="0 0 620 260">
             {defs_and_style}
             <circle cx="48" cy="130" r="20" class="comp"/>
             <path d="M 37 130 Q 42.5 118 48 130 T 59 130" class="comp"/>
@@ -164,7 +164,7 @@ def render_circuit_svg(circuit_type, p):
 
     elif circuit_type == "bridge":
         return f"""
-        <svg class="ckt-svg" width="620" height="260" viewBox="0 0 620 260">
+        <svg class="ckt-svg" viewBox="0 0 620 260">
             {defs_and_style}
             <circle cx="45" cy="125" r="19" class="comp"/>
             <path d="M 35 125 Q 40 114 45 125 T 55 125" class="comp"/>
@@ -236,7 +236,7 @@ def render_circuit_svg(circuit_type, p):
     elif circuit_type in ("filter_analysis", "filter_design"):
         c_str = f"{p['C']} μF" if circuit_type == "filter_analysis" else f"? μF (γ = {p['gamma']})"
         return f"""
-        <svg class="ckt-svg" width="640" height="240" viewBox="0 0 640 240">
+        <svg class="ckt-svg" viewBox="0 0 640 240">
             {defs_and_style}
             <circle cx="55" cy="120" r="22" class="comp"/>
             <path d="M 43 120 Q 49 107 55 120 T 67 120" class="comp"/>
@@ -305,7 +305,7 @@ def render_circuit_svg(circuit_type, p):
 
     elif circuit_type == "zener":
         return f"""
-        <svg class="ckt-svg" width="600" height="230" viewBox="0 0 600 230">
+        <svg class="ckt-svg" viewBox="0 0 600 230">
             {defs_and_style}
             <line x1="65" y1="50" x2="65" y2="98" class="wire"/>
             <line x1="48" y1="98" x2="82" y2="98" class="comp"/>
@@ -362,7 +362,7 @@ def render_circuit_svg(circuit_type, p):
     return ""
 
 # ==============================================================================
-# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (WITH HEADER & FOOTER)
+# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (MOBILE-RESPONSIVE)
 # ==============================================================================
 def launch_assessment(config, mcq_bank, design_builder_fn):
     num_mcqs = min(config["NUM_MCQS"], len(mcq_bank))
@@ -377,17 +377,52 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     department = config.get("DEPARTMENT", "Department of Electronics and Communication Engineering")
     college_name = config.get("COLLEGE_NAME", "Government College of Engineering Kannur")
 
+    # --- MOBILE-RESPONSIVE CSS OVERRIDES FOR IPYWIDGETS ---
+    mobile_css = widgets.HTML("""
+    <style>
+        /* Fix RadioButtons overlapping on mobile by allowing multi-line height & wrapping */
+        .widget-radio-box {
+            height: auto !important;
+            max-height: none !important;
+            width: 100% !important;
+        }
+        .widget-radio-box label {
+            white-space: normal !important;
+            height: auto !important;
+            line-height: 1.45 !important;
+            padding: 6px 4px !important;
+            margin-bottom: 4px !important;
+            display: flex !important;
+            align-items: flex-start !important;
+            word-break: break-word !important;
+        }
+        .widget-radio-box input[type="radio"] {
+            margin-top: 4px !important;
+            margin-right: 8px !important;
+            flex-shrink: 0 !important;
+        }
+        /* Keep buttons & inputs inside mobile screen width */
+        .jupyter-button {
+            max-width: 100% !important;
+            white-space: normal !important;
+            height: auto !important;
+            min-height: 40px !important;
+            line-height: 1.3 !important;
+        }
+    </style>
+    """)
+
     # --- TOP HEADER BANNER ---
     header_html = widgets.HTML(f"""
-    <div style="background:linear-gradient(90deg, #1e3c72, #2a5298); color:white; padding:20px; border-radius:8px; margin-bottom:14px; font-family:'Segoe UI', Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
-        <div style="font-size:13px; text-transform:uppercase; letter-spacing:1px; color:#bbdefb; font-weight:600; margin-bottom:4px;">
+    <div style="background:linear-gradient(90deg, #1e3c72, #2a5298); color:white; padding:16px; border-radius:8px; margin-bottom:14px; font-family:'Segoe UI', Arial, sans-serif; box-shadow: 0 2px 6px rgba(0,0,0,0.12); box-sizing:border-box; width:100%;">
+        <div style="font-size:12px; text-transform:uppercase; letter-spacing:0.8px; color:#bbdefb; font-weight:600; margin-bottom:4px; line-height:1.4;">
             {college_name} &nbsp;|&nbsp; {department}
         </div>
-        <h2 style="margin:0 0 6px 0; font-size:22px;"> {config['COURSE_TITLE']}</h2>
+        <h2 style="margin:0 0 6px 0; font-size:20px; line-height:1.3;">{config['COURSE_TITLE']}</h2>
         <div style="font-size:14px; color:#e3f2fd; margin-bottom:10px;">
             <b>Course Faculty:</b> {faculty_name}
         </div>
-        <div style="background:rgba(255,255,255,0.14); padding:8px 12px; border-radius:5px; font-size:13.5px; display:inline-block;">
+        <div style="background:rgba(255,255,255,0.14); padding:8px 12px; border-radius:5px; font-size:13px; display:inline-block; line-height:1.5;">
             <b>Stage 1:</b> {num_mcqs} MCQs ({mcq_total_marks} Marks) &nbsp;|&nbsp;
             <b>Stage 2:</b> {num_designs} Circuit Design Problems ({design_total_marks} Marks) &nbsp;|&nbsp;
             <b>Total: {overall_marks} Marks</b>
@@ -397,7 +432,7 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
 
     # --- BOTTOM FOOTER BAR ---
     footer_html = widgets.HTML(f"""
-    <div style="margin-top:28px; padding:14px 18px; background:#f1f5f9; border-top:3px solid #1e3c72; border-radius:6px; text-align:center; font-family:'Segoe UI', Arial, sans-serif; color:#334155; font-size:13px;">
+    <div style="margin-top:28px; padding:14px 14px; background:#f1f5f9; border-top:3px solid #1e3c72; border-radius:6px; text-align:center; font-family:'Segoe UI', Arial, sans-serif; color:#334155; font-size:12.5px; line-height:1.5; box-sizing:border-box; width:100%;">
         <div><b>{config['COURSE_TITLE']}</b> — Interactive Auto-Graded CIE Assessment</div>
         <div style="margin-top:4px; color:#0f172a;">
             <b>Faculty:</b> {faculty_name} &nbsp;|&nbsp; <b>{department}</b> &nbsp;|&nbsp; <b>{college_name}</b>
@@ -405,13 +440,40 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     </div>
     """)
 
-    roll_box = widgets.Text(description="Roll No:", placeholder="e.g., 5", style={'description_width': '70px'})
-    name_box = widgets.Text(description="Full Name:", placeholder="e.g., Rahul K C", style={'description_width': '75px'})
-    start_btn = widgets.Button(description="Start Assignment", button_style='primary', icon='play', layout=widgets.Layout(width='200px'))
+    # Responsive student input controls that wrap cleanly on mobile phones
+    roll_box = widgets.Text(
+        description="Roll No:",
+        placeholder="e.g., 5",
+        style={'description_width': '70px'},
+        layout=widgets.Layout(width='240px', max_width='100%', margin='4px 8px 4px 0')
+    )
+    name_box = widgets.Text(
+        description="Full Name:",
+        placeholder="e.g., Rahul K C",
+        style={'description_width': '75px'},
+        layout=widgets.Layout(width='280px', max_width='100%', margin='4px 8px 4px 0')
+    )
+    start_btn = widgets.Button(
+        description="Start Assignment",
+        button_style='primary',
+        icon='play',
+        layout=widgets.Layout(width='200px', max_width='100%', height='40px', margin='6px 0')
+    )
 
-    stage1_box = widgets.VBox([])
+    student_bar = widgets.Box(
+        [roll_box, name_box, start_btn],
+        layout=widgets.Layout(
+            display='flex',
+            flex_flow='row wrap',
+            align_items='center',
+            width='100%',
+            margin='4px 0 10px 0'
+        )
+    )
+
+    stage1_box = widgets.VBox([], layout=widgets.Layout(width='100%'))
     stage1_feedback = widgets.HTML("")
-    stage2_box = widgets.VBox([])
+    stage2_box = widgets.VBox([], layout=widgets.Layout(width='100%'))
     stage2_feedback = widgets.HTML("")
 
     state = {
@@ -453,18 +515,26 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
             m_per_q = config["MARKS_PER_MCQ"]
             ui_list = [widgets.HTML(
                 f"<div style='background:#e3f2fd; padding:12px; border-radius:6px; margin-top:10px;'>"
-                f"<h3 style='margin:0; color:#0d47a1;'>🔒 Stage 1: Conceptual MCQs ({num_mcqs} × {m_per_q} = {mcq_total_marks} Marks)</h3>"
-                f"<p style='margin:4px 0 0 0;'>Answer all {num_mcqs} questions correctly to unlock Stage 2 (Design Problems).</p></div>"
+                f"<h3 style='margin:0; color:#0d47a1; font-size:17px;'>🔒 Stage 1: Conceptual MCQs ({num_mcqs} × {m_per_q} = {mcq_total_marks} Marks)</h3>"
+                f"<p style='margin:4px 0 0 0; font-size:14px;'>Answer all {num_mcqs} questions correctly to unlock Stage 2 (Design Problems).</p></div>"
             )]
 
             for i, m in enumerate(state["active_mcqs"]):
-                q_html = widgets.HTML(f"<p style='margin:12px 0 4px 0;'><b>Q{i+1}. {m['q']}</b> ({m_per_q} Mark)</p>")
-                rb = widgets.RadioButtons(options=m["options"], value=None, layout=widgets.Layout(width='98%'))
+                q_html = widgets.HTML(f"<p style='margin:14px 0 6px 0; line-height:1.45;'><b>Q{i+1}. {m['q']}</b> ({m_per_q} Mark)</p>")
+                rb = widgets.RadioButtons(
+                    options=m["options"],
+                    value=None,
+                    layout=widgets.Layout(width='100%', height='auto', margin='0 0 8px 0')
+                )
                 state["mcq_radios"].append(rb)
                 ui_list.extend([q_html, rb])
 
-            check_mcq_btn = widgets.Button(description="Verify MCQs & Unlock Stage 2", button_style='warning', icon='unlock',
-                                           layout=widgets.Layout(width='270px', height='42px', margin='16px 0'))
+            check_mcq_btn = widgets.Button(
+                description="Verify MCQs & Unlock Stage 2",
+                button_style='warning',
+                icon='unlock',
+                layout=widgets.Layout(width='280px', max_width='100%', height='44px', margin='16px 0')
+            )
             check_mcq_btn.on_click(on_verify_mcqs)
             ui_list.append(check_mcq_btn)
 
@@ -509,30 +579,38 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
 
         s2_ui = [widgets.HTML(
             f"<div style='background:#e8eaf6; padding:12px; border-radius:6px; margin-top:20px;'>"
-            f"<h3 style='margin:0; color:#1a237e;'>🔓 Stage 2: Circuit Analysis & Design ({num_designs} × {m_per_d} = {design_total_marks} Marks)</h3>"
-            f"<p style='margin:4px 0 0 0;'><i>Assigned to Roll No: <b>{roll_box.value.strip().upper()}</b>. Enter numerical values accurate to 2 decimal places.</i></p></div>"
+            f"<h3 style='margin:0; color:#1a237e; font-size:17px;'>🔓 Stage 2: Circuit Analysis & Design ({num_designs} × {m_per_d} = {design_total_marks} Marks)</h3>"
+            f"<p style='margin:4px 0 0 0; font-size:14px;'><i>Assigned to Roll No: <b>{roll_box.value.strip().upper()}</b>. Enter numerical values accurate to 2 decimal places.</i></p></div>"
         )]
 
         for prob in state["active_designs"]:
             svg_diagram = render_circuit_svg(prob["circuit_type"], prob["draw_params"])
             field_widgets = []
             for f_meta in prob["fields"]:
-                w = widgets.FloatText(description=f_meta["label"], style={'description_width': '135px'}, layout=widgets.Layout(width='250px'))
+                w = widgets.FloatText(
+                    description=f_meta["label"],
+                    style={'description_width': '130px'},
+                    layout=widgets.Layout(width='250px', max_width='100%', margin='4px 8px 4px 0')
+                )
                 state["design_inputs"][f_meta["key"]] = w
                 field_widgets.append(w)
 
             card_box = widgets.VBox([
                 widgets.HTML(
-                    f"<div style='background:#fafafa; padding:14px; border:1px solid #ddd; border-left:4px solid #1976d2; border-radius:6px; margin-top:15px;'>"
+                    f"<div style='background:#fafafa; padding:12px; border:1px solid #ddd; border-left:4px solid #1976d2; border-radius:6px; margin-top:15px; box-sizing:border-box;'>"
                     f"<h4 style='margin:0 0 6px 0;'>{prob['title']} ({m_per_d} Marks)</h4>"
-                    f"<p style='margin:0 0 10px 0;'>{prob['desc']}</p>{svg_diagram}</div>"
+                    f"<p style='margin:0 0 10px 0; line-height:1.45;'>{prob['desc']}</p>{svg_diagram}</div>"
                 ),
-                widgets.HBox(field_widgets, layout=widgets.Layout(flex_flow='row wrap', margin='8px 0 10px 0'))
-            ])
+                widgets.Box(field_widgets, layout=widgets.Layout(display='flex', flex_flow='row wrap', width='100%', margin='8px 0 10px 0'))
+            ], layout=widgets.Layout(width='100%'))
             s2_ui.append(card_box)
 
-        verify_s2_btn = widgets.Button(description="Verify All Design Problems & Generate Code", button_style='success', icon='check-circle',
-                                       layout=widgets.Layout(width='340px', height='45px', margin='20px 0'))
+        verify_s2_btn = widgets.Button(
+            description="Verify All Design Problems & Generate Code",
+            button_style='success',
+            icon='check-circle',
+            layout=widgets.Layout(width='340px', max_width='100%', height='45px', margin='20px 0')
+        )
         verify_s2_btn.on_click(on_verify_stage2)
         s2_ui.append(verify_s2_btn)
 
@@ -571,27 +649,27 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
                 <div style="background:#fff3e0; border-left:5px solid #ef6c00; padding:14px; border-radius:6px; margin-top:12px;">
                     <h4 style="margin:0 0 8px 0; color:#e65100;">🔧 Stage 2 Score: {earned_design_marks} / {design_total_marks} Marks ({passed_fields}/{total_fields} Parameters Correct)</h4>
                     <p style="margin:0 0 8px 0;">Correct parameter boxes are locked. Recalculate the items marked with ❌ and click Verify again:</p>
-                    <ul style="margin:0;">{''.join(feedback_rows)}</ul>
+                    <ul style="margin:0; padding-left:20px;">{''.join(feedback_rows)}</ul>
                 </div>
                 """
             else:
                 b.disabled = True
                 ver_code = make_verification_code(roll_box.value, name_box.value, config)
                 stage2_feedback.value = f"""
-                <div style="background:linear-gradient(135deg, #e8f5e9, #c8e6c9); border:3px solid #2e7d32; padding:22px; border-radius:10px; margin-top:18px; text-align:center; font-family:'Segoe UI', Arial, sans-serif;">
-                    <div style="font-size:12.5px; color:#2e7d32; font-weight:bold; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">
+                <div style="background:linear-gradient(135deg, #e8f5e9, #c8e6c9); border:3px solid #2e7d32; padding:18px; border-radius:10px; margin-top:18px; text-align:center; font-family:'Segoe UI', Arial, sans-serif; box-sizing:border-box;">
+                    <div style="font-size:12px; color:#2e7d32; font-weight:bold; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px;">
                         {college_name} • {department}
                     </div>
-                    <h2 style="color:#1b5e20; margin:0 0 8px 0;">🎉 Congratulations, {name_box.value.strip()}!</h2>
-                    <p style="font-size:15.5px; margin:0 0 14px 0;">
+                    <h2 style="color:#1b5e20; margin:0 0 8px 0; font-size:20px;">🎉 Congratulations, {name_box.value.strip()}!</h2>
+                    <p style="font-size:15px; margin:0 0 14px 0; line-height:1.45;">
                         You have mastered all {num_mcqs} MCQs ({mcq_total_marks} Marks) and solved all {num_designs} Circuit Design Problems ({design_total_marks} Marks)
                         for a total score of <b>{overall_marks} / {overall_marks} Marks</b>!
                     </p>
-                    <div style="background:#ffffff; border:2px dashed #1b5e20; display:inline-block; padding:14px 28px; border-radius:8px; margin-bottom:12px;">
-                        <span style="font-size:12px; color:#555; display:block;">VERIFICATION CODE ({faculty_name})</span>
-                        <span style="font-size:24px; font-family:monospace; font-weight:bold; color:#0d47a1; letter-spacing:2px;">{ver_code}</span>
+                    <div style="background:#ffffff; border:2px dashed #1b5e20; display:inline-block; padding:12px 18px; border-radius:8px; margin-bottom:12px; max-width:100%; box-sizing:border-box;">
+                        <span style="font-size:11.5px; color:#555; display:block;">VERIFICATION CODE ({faculty_name})</span>
+                        <span style="font-size:20px; font-family:monospace; font-weight:bold; color:#0d47a1; letter-spacing:1.5px; word-break:break-all;">{ver_code}</span>
                     </div>
-                    <p style="font-size:14px; color:#333; margin:0;">📋 Share this code with <b>{faculty_name}</b> / TA for CIE verification.</p>
+                    <p style="font-size:13.5px; color:#333; margin:0;">📋 Share this code with <b>{faculty_name}</b> / TA for CIE verification.</p>
                 </div>
                 """
         except Exception:
@@ -599,12 +677,13 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
 
     start_btn.on_click(on_start_clicked)
     main_container = widgets.VBox([
+        mobile_css,
         header_html,
-        widgets.HBox([roll_box, name_box, start_btn]),
+        student_bar,
         stage1_box,
         stage1_feedback,
         stage2_box,
         stage2_feedback,
         footer_html
-    ])
+    ], layout=widgets.Layout(width='100%', max_width='100%'))
     display(main_container)
