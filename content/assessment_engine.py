@@ -46,7 +46,7 @@ def render_circuit_svg(circuit_type, p):
             d.add(elm.Diode().right().label('$D_2$'))
             d.add(elm.Line().right().length(1.2))
             d.add(elm.Line().up().to(top_node))
-            d.add(elm.Line().from(top_node).to(r_end))
+            d.add(elm.Line().at(top_node).to(r_end))
 
         elif circuit_type == "bridge":
             d.add(elm.SourceSin().up().label(f'$V_m = {p["Vm"]}$ V\n50 Hz', loc='top'))
