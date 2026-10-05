@@ -1,5 +1,6 @@
 import hashlib
 import random
+import re
 import traceback
 import ipywidgets as widgets
 from IPython.display import display
@@ -15,6 +16,127 @@ def make_verification_code(roll_no, name, config):
     raw = f"{prefix}|{clean_roll}|{clean_name}|{salt}"
     code4 = hashlib.sha256(raw.encode()).hexdigest().upper()[:4]
     return f"{prefix}-{clean_roll}-{code4}"
+
+# ==============================================================================
+# 1B. AUTOMATIC SUBSCRIPT FORMATTER FOR QUESTIONS, OPTIONS & DESCRIPTIONS
+# ==============================================================================
+def format_subscripts(text):
+    if not text:
+        return ""
+    s = str(text)
+
+    # 1. Convert explicit LaTeX-style X_{sub} or X_sub (e.g., V_{L}, I_Z)
+    s = re.sub(r'([A-Za-z0-9\u0370-\u03FF]+)_\{([^}]+)\}', r'\1<sub>\2</sub>', s)
+    s = re.sub(r'\b([A-Za-z])_([A-Za-z0-9]+)\b', r'\1<sub>\2</sub>', s)
+
+    # 2. Convert special multi-character circuit terms first
+    s = s.replace("Vr(p-p)", "V<sub>r(p-p)</sub>")
+    s = s.replace("Vγ", "V<sub>γ</sub>")
+    s = s.replace("ηVT", "ηV<sub>T</sub>")
+
+    # 3. Convert standard electronics variables (Vm, Vdc, Vrms, Vin, VL, VZ, RL, RS, ID, I0, IZ, IL, IS, etc.)
+    token_map = {
+        "Vm": "V<sub>m</sub>",
+        "Vdc": "V<sub>dc</sub>",
+        "Vrms": "V<sub>rms</sub>",
+        "Vin": "V<sub>in</sub>",
+        "VL": "V<sub>L</sub>",
+        "VZ": "V<sub>Z</sub>",
+        "Vz": "V<sub>z</sub>",
+        "VD": "V<sub>D</sub>",
+        "VT": "V<sub>T</sub>",
+        "RL": "R<sub>L</sub>",
+        "RS": "R<sub>S</sub>",
+        "Idc": "I<sub>dc</sub>",
+        "Irms": "I<sub>rms</sub>",
+        "ID": "I<sub>D</sub>",
+        "I0": "I<sub>0</sub>",
+        "IZ": "I<sub>Z</sub>",
+        "Iz": "I<sub>z</sub>",
+        "IL": "I<sub>L</sub>",
+        "IS": "I<sub>S</sub>",
+        "Pdc": "P<sub>dc</sub>",
+        "PZ": "P<sub>Z</sub>",
+        "fr": "f<sub>r</sub>",
+    }
+    pattern = r'(?<![A-Za-z0-9_])(' + '|'.join(re.escape(k) for k in token_map.keys()) + r')(?![A-Za-z0-9_])'
+    s = re.sub(pattern, lambda m: token_map[m.group(0)], s)
+
+    return s
+
+# ==============================================================================
+# 1C. MOBILE-FRIENDLY RADIO GROUP (CIRCLE ON LEFT + HTML SUBSCRIPTS ON RIGHT)
+# ==============================================================================
+class CustomRadioGroup:
+    """
+    Replaces standard ipywidgets.RadioButtons so that:
+      1. The radio button is always aligned on the left side.
+      2. Options support full HTML (<sub>, <sup>) and wrap cleanly on mobile screens.
+      3. Preserves the exact .value, .disabled, and .widget interface expected by the grader.
+    """
+    def __init__(self, options):
+        self.options = list(options)
+        self._value = None
+        self._updating = False
+        self.checks = []
+        rows = []
+
+        for opt in self.options:
+            cb = widgets.Checkbox(
+                value=False,
+                indent=False,
+                layout=widgets.Layout(width='24px', min_width='24px', height='24px', margin='2px 6px 0 0')
+            )
+            cb.add_class("left-radio-cb")
+            lbl = widgets.HTML(
+                f"<div style='line-height:1.45; font-size:14.5px; color:#1e293b; padding-top:1px; word-break:break-word;'>"
+                f"{format_subscripts(opt)}</div>",
+                layout=widgets.Layout(flex='1 1 auto', width='auto', margin='0')
+            )
+            cb.observe(self._make_observer(opt, cb), names='value')
+            self.checks.append(cb)
+            row = widgets.Box(
+                [cb, lbl],
+                layout=widgets.Layout(
+                    display='flex',
+                    flex_flow='row nowrap',
+                    align_items='flex-start',
+                    width='100%',
+                    margin='4px 0'
+                )
+            )
+            rows.append(row)
+
+        self.widget = widgets.VBox(rows, layout=widgets.Layout(width='100%', margin='2px 0 10px 0'))
+
+    def _make_observer(self, opt, target_cb):
+        def _observer(change):
+            if self._updating:
+                return
+            self._updating = True
+            if change['new']:
+                self._value = opt
+                for c in self.checks:
+                    if c is not target_cb:
+                        c.value = False
+            else:
+                if self._value == opt:
+                    target_cb.value = True
+            self._updating = False
+        return _observer
+
+    @property
+    def value(self):
+        return self._value
+
+    @property
+    def disabled(self):
+        return self.checks[0].disabled if self.checks else False
+
+    @disabled.setter
+    def disabled(self, val):
+        for c in self.checks:
+            c.disabled = bool(val)
 
 # ==============================================================================
 # 2. TEXTBOOK-QUALITY IEEE SVG CIRCUIT RENDERER
@@ -362,7 +484,7 @@ def render_circuit_svg(circuit_type, p):
     return ""
 
 # ==============================================================================
-# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (MOBILE-RESPONSIVE)
+# 3. TWO-STAGE GATED UI & AUTO-GRADER ENGINE (MOBILE-RESPONSIVE + SUBSCRIPTS)
 # ==============================================================================
 def launch_assessment(config, mcq_bank, design_builder_fn):
     num_mcqs = min(config["NUM_MCQS"], len(mcq_bank))
@@ -377,29 +499,31 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     department = config.get("DEPARTMENT", "Department of Electronics and Communication Engineering")
     college_name = config.get("COLLEGE_NAME", "Government College of Engineering Kannur")
 
-    # --- MOBILE-RESPONSIVE CSS OVERRIDES FOR IPYWIDGETS ---
+    # --- MOBILE-RESPONSIVE CSS & ROUND LEFT RADIO STYLING ---
     mobile_css = widgets.HTML("""
     <style>
-        /* Fix RadioButtons overlapping on mobile by allowing multi-line height & wrapping */
-        .widget-radio-box {
-            height: auto !important;
-            max-height: none !important;
-            width: 100% !important;
+        /* Style left-aligned checkboxes as circular radio buttons */
+        .left-radio-cb input[type="checkbox"] {
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            width: 18px !important;
+            height: 18px !important;
+            border: 2px solid #1e3c72 !important;
+            border-radius: 50% !important;
+            outline: none !important;
+            cursor: pointer !important;
+            background-color: #ffffff !important;
+            position: relative !important;
+            margin: 0 !important;
+            vertical-align: middle !important;
         }
-        .widget-radio-box label {
-            white-space: normal !important;
-            height: auto !important;
-            line-height: 1.45 !important;
-            padding: 6px 4px !important;
-            margin-bottom: 4px !important;
-            display: flex !important;
-            align-items: flex-start !important;
-            word-break: break-word !important;
+        .left-radio-cb input[type="checkbox"]:checked {
+            background-color: #1e3c72 !important;
+            box-shadow: inset 0 0 0 3.5px #ffffff !important;
         }
-        .widget-radio-box input[type="radio"] {
-            margin-top: 4px !important;
-            margin-right: 8px !important;
-            flex-shrink: 0 !important;
+        .left-radio-cb input[type="checkbox"]:disabled {
+            opacity: 0.6 !important;
+            cursor: default !important;
         }
         /* Keep buttons & inputs inside mobile screen width */
         .jupyter-button {
@@ -408,6 +532,13 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
             height: auto !important;
             min-height: 40px !important;
             line-height: 1.3 !important;
+        }
+        sub {
+            font-size: 75% !important;
+            line-height: 0 !important;
+            position: relative !important;
+            vertical-align: baseline !important;
+            bottom: -0.22em !important;
         }
     </style>
     """)
@@ -440,7 +571,6 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
     </div>
     """)
 
-    # Responsive student input controls that wrap cleanly on mobile phones
     roll_box = widgets.Text(
         description="Roll No:",
         placeholder="e.g., 5",
@@ -520,14 +650,11 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
             )]
 
             for i, m in enumerate(state["active_mcqs"]):
-                q_html = widgets.HTML(f"<p style='margin:14px 0 6px 0; line-height:1.45;'><b>Q{i+1}. {m['q']}</b> ({m_per_q} Mark)</p>")
-                rb = widgets.RadioButtons(
-                    options=m["options"],
-                    value=None,
-                    layout=widgets.Layout(width='100%', height='auto', margin='0 0 8px 0')
-                )
-                state["mcq_radios"].append(rb)
-                ui_list.extend([q_html, rb])
+                q_formatted = format_subscripts(m["q"])
+                q_html = widgets.HTML(f"<p style='margin:14px 0 6px 0; line-height:1.5; font-size:15px;'><b>Q{i+1}. {q_formatted}</b> ({m_per_q} Mark)</p>")
+                rg = CustomRadioGroup(m["options"])
+                state["mcq_radios"].append(rg)
+                ui_list.extend([q_html, rg.widget])
 
             check_mcq_btn = widgets.Button(
                 description="Verify MCQs & Unlock Stage 2",
@@ -562,8 +689,8 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
                 )
             else:
                 b.disabled = True
-                for rb in state["mcq_radios"]:
-                    rb.disabled = True
+                for rg in state["mcq_radios"]:
+                    rg.disabled = True
                 stage1_feedback.value = (
                     f"<div style='background:#e8f5e9; border-left:5px solid #2e7d32; padding:12px; margin:10px 0;'>"
                     f"<b>✅ Stage 1 Complete ({mcq_total_marks} / {mcq_total_marks} Marks)!</b> "
@@ -595,11 +722,12 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
                 state["design_inputs"][f_meta["key"]] = w
                 field_widgets.append(w)
 
+            desc_formatted = format_subscripts(prob["desc"])
             card_box = widgets.VBox([
                 widgets.HTML(
                     f"<div style='background:#fafafa; padding:12px; border:1px solid #ddd; border-left:4px solid #1976d2; border-radius:6px; margin-top:15px; box-sizing:border-box;'>"
                     f"<h4 style='margin:0 0 6px 0;'>{prob['title']} ({m_per_d} Marks)</h4>"
-                    f"<p style='margin:0 0 10px 0; line-height:1.45;'>{prob['desc']}</p>{svg_diagram}</div>"
+                    f"<p style='margin:0 0 10px 0; line-height:1.5;'>{desc_formatted}</p>{svg_diagram}</div>"
                 ),
                 widgets.Box(field_widgets, layout=widgets.Layout(display='flex', flex_flow='row wrap', width='100%', margin='8px 0 10px 0'))
             ], layout=widgets.Layout(width='100%'))
@@ -630,13 +758,14 @@ def launch_assessment(config, mcq_bank, design_builder_fn):
                 for f_meta in prob["fields"]:
                     total_fields += 1
                     w = state["design_inputs"][f_meta["key"]]
+                    lbl_fmt = format_subscripts(f_meta["label"])
                     if is_close(w.value, f_meta["ans"]):
                         passed_fields += 1
                         w.disabled = True
-                        prob_status.append(f"<span style='color:#2e7d32;'>✅ {f_meta['label']} Correct</span>")
+                        prob_status.append(f"<span style='color:#2e7d32;'>✅ {lbl_fmt} Correct</span>")
                     else:
                         prob_correct = False
-                        prob_status.append(f"<span style='color:#c62828;'>❌ {f_meta['label']} Incorrect</span>")
+                        prob_status.append(f"<span style='color:#c62828;'>❌ {lbl_fmt} Incorrect</span>")
 
                 if prob_correct:
                     earned_design_marks += m_per_d
